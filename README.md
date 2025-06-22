@@ -28,9 +28,7 @@ A web-based application that uses machine learning to detect phishing emails bas
 ### 🔍 Backend (Flask API)
 - Python 3, Flask
 - scikit-learn (ML model)
-- Preprocessing: TF-IDF, text cleaning
-- Trained on Enron spam + phishing corpora
-- Hosted on **Render**
+-- Hosted on **Render**
 
 ### 💻 Frontend (Web App)
 - Next.js + Tailwind CSS
@@ -80,29 +78,24 @@ python app.py
 cd frontend
 npm install
 npm run dev
-📚 Training the Model
-The model was trained using a combination of phishing email corpora and ham/spam datasets:
 
-Nazario phishing corpus
+## 📚 Training the Model
+The ML model is based on a modified version of the [Detecting Spam in Emails with LSTMs](https://www.kaggle.com/code/hrhuynguyen/detecting-spam-in-emails-with-lstms-99-accuracy) 
+notebook by [hrhuynguyen](https://www.kaggle.com/hrhuynguyen).
 
-Enron dataset
+### Modifications made:
+- Adapted the dataset for phishing detection
+- Simplified preprocessing for deployment
+- Exported trained model as `.h5` file using `tensorflow.keras`
+- Created a Flask API that loads and serves predictions
+
+### Dataset used:
+📎 [Kaggle Email Spam Dataset](https://www.kaggle.com/datasets/balaka18/email-spam-classification-dataset-csv)
 
 The model uses:
-
-Text preprocessing (lowercasing, tokenization, stopword removal)
-
-TF-IDF vectorization
-
-Logistic Regression classifier
-
-✅ To Do
- Add multi-language support
-
- Visual email highlighting (e.g., red-flagged lines)
-
- Export result as PDF
-
- Add user accounts for email analysis history
+- Text cleaning, tokenization
+- Keras Tokenizer + padding
+- LSTM layers
 
 📄 License
 MIT License

@@ -1,0 +1,12 @@
+# Ignore large local data
+datasets/
+*.csv
+*.eml
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment files
+.env
+venv/
