@@ -1,13 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import joblib
-import re
-import string
-import numpy as np
-from utils import preprocess_email, extract_flags
-
-model = joblib.load("phishing_model.pkl")
-vectorizer = joblib.load("vectorizer.pkl")
+import os
+import sys
+from utils import preprocess_email, extract_flags, predict_phishing
 
 # Init Flask app
 app = Flask(__name__)
@@ -26,25 +21,17 @@ def analyze():
         if not email_content:
             return jsonify({"error": "No email content provided"}), 400
 
-        # Preprocess
-        cleaned_text = preprocess_email(email_content)
-        vectorized = vectorizer.transform([cleaned_text])
-
-        # Predict
-        prediction = model.predict(vectorized)[0]
-        confidence = model.predict_proba(vectorized)[0][prediction] * 100
-
-        # Flags
-        flags = extract_flags(email_content)
+        # Use the predict_phishing function from utils
+        result = predict_phishing(email_content)
 
         return jsonify({
-            "verdict": "phishing" if prediction == 1 else "legitimate",
-            "confidence": round(confidence, 2),
-            "flags": flags
+            "verdict": result["verdict"],
+            "confidence": round(result["confidence"], 2),
+            "flags": result["flags"]
         })
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
