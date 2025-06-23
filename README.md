@@ -97,8 +97,12 @@ The model uses:
 - Keras Tokenizer + padding
 - LSTM layers
 
-📄 License
-MIT License
+## 📁 Model Files
+
+- `phishing_lstm_model.h5`: Saved Keras LSTM model
+- `tokenizer.pickle`: Tokenizer used for consistent input processing
+
+These are loaded by the Flask API on every request.
 
 👤 Author
 Walaa Mohamed

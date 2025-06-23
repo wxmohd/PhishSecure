@@ -1,12 +1,25 @@
-# Ignore large local data
-datasets/
+# Ignore model files
+*.h5
+*.pkl
+
+# Ignore tokenizers / encoders
+*.json
+*.pickle
+
+# Ignore dataset files
 *.csv
-*.eml
+datasets/
+*.zip
+
+# Jupyter notebooks 
+*.ipynb
 
 # Python cache
 __pycache__/
 *.pyc
 
-# Environment files
-.env
+# Environment
 venv/
+.env
+
+/frontend/node_modules
