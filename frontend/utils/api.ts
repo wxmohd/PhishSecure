@@ -23,7 +23,7 @@ export const analyzeEmail = async (emailContent: string): Promise<AnalysisResult
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email: emailContent }),
+      body: JSON.stringify({ content: emailContent }),
     });
 
     if (!response.ok) {
@@ -31,7 +31,11 @@ export const analyzeEmail = async (emailContent: string): Promise<AnalysisResult
     }
 
     const data = await response.json();
-    return data;
+    return {
+      verdict: data.verdict || 'legitimate',
+      confidence: data.confidence || 0,
+      flags: data.flags || []
+    };
   } catch (error) {
     console.error('Error analyzing email:', error);
     throw error;

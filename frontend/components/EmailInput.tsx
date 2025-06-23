@@ -1,105 +1,198 @@
-import { useState } from 'react';
-import { analyzeEmail, AnalysisResult } from '../utils/api';
-import ResultCard from './ResultCard';
+// EmailInput.tsx
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
-const EmailInput: React.FC = () => {
-  const [emailContent, setEmailContent] = useState('');
+export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) => {
+  const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [validationMessage, setValidationMessage] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingTimer, setTypingTimer] = useState<NodeJS.Timeout | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!emailContent.trim()) {
-      setError('Please enter email content to analyze');
+  // Check if the text contains email-like format
+  const checkEmailFormat = (text: string) => {
+    if (!text.trim()) {
+      setValidationMessage('');
       return;
     }
-
-    setIsLoading(true);
-    setError(null);
     
-    try {
-      const analysisResult = await analyzeEmail(emailContent);
-      setResult(analysisResult);
-    } catch (err) {
-      setError('Failed to analyze email. Please try again.');
-      console.error('Analysis error:', err);
-    } finally {
-      setIsLoading(false);
+    // Simple check for @ symbol
+    if (!text.includes('@')) {
+      setValidationMessage('Email should contain @ symbol');
+      return;
     }
+    
+    // Check for domain-like structure
+    if (!text.match(/@[^@]+\.[^@]+$/)) {
+      setValidationMessage('Email should have a domain (e.g., @gmail.com)');
+      return;
+    }
+    
+    // All checks passed - any email with @ and a domain is accepted
+    setValidationMessage('');
   };
 
-  const handleReset = () => {
-    setEmailContent('');
-    setResult(null);
-    setError(null);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setEmail(newValue);
+    setIsTyping(true);
+    
+    // Clear previous timer
+    if (typingTimer) {
+      clearTimeout(typingTimer);
+    }
+    
+    // Set new timer
+    const timer = setTimeout(() => {
+      checkEmailFormat(newValue);
+      setIsTyping(false);
+    }, 500);
+    
+    setTypingTimer(timer);
+  };
+
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimer) {
+        clearTimeout(typingTimer);
+      }
+    };
+  }, [typingTimer]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setIsLoading(true);
+      onSubmit(email);
+    }
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      {!result ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email-content" className="block text-sm font-medium text-gray-700 mb-1">
-              Paste Email Content
-            </label>
+    <motion.div style={{ width: '100%' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+          <div style={{ width: '0.25rem', height: '1.5rem', backgroundColor: '#3b82f6', borderRadius: '9999px' }}></div>
+          <label htmlFor="email-input" style={{ fontSize: '0.875rem', fontWeight: 500, color: '#bfdbfe' }}>Paste suspicious email content</label>
+        </div>
+        
+        <form onSubmit={handleSubmit}>
+          <div style={{ position: 'relative' }}>
             <textarea
-              id="email-content"
-              className="textarea"
-              placeholder="Paste the full email content here (including headers, subject, body, etc.)"
-              value={emailContent}
-              onChange={(e) => setEmailContent(e.target.value)}
-              rows={10}
+              id="email-input"
+              value={email}
+              onChange={handleEmailChange}
+              placeholder="Paste the email content here..."
+              style={{
+                width: '100%',
+                height: '10rem',
+                padding: '1rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(30, 64, 175, 0.5)',
+                color: 'white',
+                resize: 'none',
+                backdropFilter: 'blur(4px)',
+                boxShadow: 'inset 0 2px 4px 0 rgba(30, 58, 138, 0.2)',
+                outline: 'none'
+              }}
+              className="white-placeholder"
+              onFocus={(e) => {
+                e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2), inset 0 2px 4px 0 rgba(30, 58, 138, 0.2)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(30, 64, 175, 0.5)';
+                e.target.style.boxShadow = 'inset 0 2px 4px 0 rgba(30, 58, 138, 0.2)';
+              }}
               disabled={isLoading}
             />
+            
+            {/* Email validation message */}
+            {isTyping && email.trim() && (
+              <div style={{ 
+                marginTop: '0.5rem', 
+                fontSize: '0.875rem', 
+                color: '#93c5fd',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span>Typing...</span>
+              </div>
+            )}
+            
+            {!isTyping && validationMessage && (
+              <div style={{ 
+                marginTop: '0.5rem', 
+                fontSize: '0.875rem', 
+                color: '#fca5a5',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.25rem'
+              }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{validationMessage}</span>
+              </div>
+            )}
           </div>
           
-          {error && (
-            <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-              {error}
-            </div>
-          )}
-          
-          <div className="flex space-x-4">
-            <button
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+            <button 
               type="submit"
-              className="btn btn-primary flex-1"
-              disabled={isLoading}
+              disabled={isLoading || (!!validationMessage && !isTyping)}
+              style={{
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
+                color: 'white',
+                fontWeight: 500,
+                boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)',
+                transition: 'all 0.2s ease',
+                cursor: (isLoading || (!!validationMessage && !isTyping)) ? 'not-allowed' : 'pointer',
+                opacity: (isLoading || (!!validationMessage && !isTyping)) ? 0.7 : 1,
+                border: 'none',
+                fontSize: '1rem'
+              }}
+              onMouseOver={(e) => {
+                if (!isLoading && !validationMessage) {
+                  e.currentTarget.style.background = 'linear-gradient(to right, #2563eb, #7c3aed)';
+                  e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(59, 130, 246, 0.4)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!isLoading && !validationMessage) {
+                  e.currentTarget.style.background = 'linear-gradient(to right, #3b82f6, #8b5cf6)';
+                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.3)';
+                }
+              }}
             >
               {isLoading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Analyzing...
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ 
+                    width: '1rem', 
+                    height: '1rem', 
+                    border: '2px solid rgba(255, 255, 255, 0.3)', 
+                    borderTop: '2px solid white', 
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }} />
+                  <span>Analyzing...</span>
+                </div>
               ) : 'Analyze Email'}
-            </button>
-            <button
-              type="button"
-              className="btn bg-gray-200 hover:bg-gray-300 text-gray-800"
-              onClick={handleReset}
-              disabled={isLoading || (!emailContent && !result)}
-            >
-              Reset
             </button>
           </div>
         </form>
-      ) : (
-        <div className="space-y-6">
-          <ResultCard result={result} />
-          <button
-            onClick={handleReset}
-            className="btn bg-gray-200 hover:bg-gray-300 text-gray-800 w-full"
-          >
-            Analyze Another Email
-          </button>
-        </div>
-      )}
-    </div>
+      </div>
+    </motion.div>
   );
 };
-
-export default EmailInput;

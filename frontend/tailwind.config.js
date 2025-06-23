@@ -74,13 +74,14 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Lexend', 'sans-serif'],
+        sans: ['Space Grotesk', 'Inter', 'sans-serif'],
+        display: ['Space Grotesk', 'sans-serif'],
       },
       boxShadow: {
         card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         'inner-glow': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        'blue-glow': '0 0 15px 2px rgba(59, 130, 246, 0.3)',
       },
       borderRadius: {
         'xl': '1rem',
@@ -91,6 +92,7 @@ module.exports = {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.5s ease-out',
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'blob': 'blob 7s infinite',
       },
       keyframes: {
         fadeIn: {
@@ -100,6 +102,12 @@ module.exports = {
         slideUp: {
           '0%': { transform: 'translateY(10px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        blob: {
+          '0%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+          '100%': { transform: 'translate(0px, 0px) scale(1)' },
         },
       },
       backdropBlur: {
@@ -122,4 +130,16 @@ module.exports = {
     },
   },
   plugins: [],
+  safelist: [
+    'animate-blob',
+    'animation-delay-2000',
+    'animation-delay-4000',
+    'bg-blue-500',
+    'bg-purple-500',
+    'bg-indigo-500',
+    'mix-blend-multiply',
+    'filter',
+    'blur-3xl',
+    'opacity-20',
+  ],
 }
