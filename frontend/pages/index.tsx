@@ -6,8 +6,12 @@ import { useState, useEffect } from 'react';
 import { analyzeEmail, AnalysisResult } from '../utils/api';
 import ResultCard from '../components/ResultCard';
 
+// Import dynamic from next/dynamic
+import dynamic from 'next/dynamic';
+import { useCallback } from 'react';
+
 // Animated particles component
-const ParticlesBackground = () => {
+const ParticlesBackgroundComponent = () => {
   useEffect(() => {
     // Create particles
     const particlesContainer = document.querySelector('.particles-bg');
@@ -53,8 +57,14 @@ const ParticlesBackground = () => {
   return <div className="particles-bg" />;
 };
 
+// Use dynamic import with ssr: false to prevent server-side rendering
+const ParticlesBackground = dynamic(
+  () => Promise.resolve(ParticlesBackgroundComponent),
+  { ssr: false }
+);
+
 // Radar scanning animation component
-const ScannerAnimation = () => {
+const ScannerAnimationComponent = () => {
   return (
     <div className="scanner" style={{
       width: '120px',
@@ -99,6 +109,60 @@ const ScannerAnimation = () => {
     </div>
   );
 };
+
+// Use dynamic import with ssr: false to prevent server-side rendering
+const ScannerAnimation = dynamic(
+  () => Promise.resolve(ScannerAnimationComponent),
+  { ssr: false }
+);
+
+// Matrix code rain component
+const MatrixCodeRainComponent = () => {
+  useEffect(() => {
+    const container = document.getElementById('matrix-code-container');
+    if (!container) return;
+    
+    // Clear any existing content
+    container.innerHTML = '';
+    
+    // Create matrix code lines
+    for (let i = 0; i < 15; i++) {
+      const codeLine = document.createElement('div');
+      codeLine.className = 'code-line';
+      
+      // Apply random styles
+      codeLine.style.left = `${Math.random() * 100}%`;
+      codeLine.style.top = `-${Math.random() * 50}px`;
+      codeLine.style.opacity = `${Math.random() * 0.5 + 0.25}`;
+      codeLine.style.animationDuration = `${Math.random() * 10 + 5}s`;
+      codeLine.style.animationDelay = `${Math.random() * 5}s`;
+      
+      // Generate random characters
+      const charCount = Math.floor(Math.random() * 20) + 10;
+      let text = '';
+      for (let j = 0; j < charCount; j++) {
+        text += String.fromCharCode(Math.floor(Math.random() * 93) + 33);
+      }
+      
+      codeLine.textContent = text;
+      container.appendChild(codeLine);
+    }
+    
+    return () => {
+      if (container) {
+        container.innerHTML = '';
+      }
+    };
+  }, []);
+  
+  return null;
+};
+
+// Use dynamic import with ssr: false to prevent server-side rendering
+const MatrixCodeRain = dynamic(
+  () => Promise.resolve(MatrixCodeRainComponent),
+  { ssr: false }
+);
 
 export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -178,26 +242,9 @@ export default function Home() {
           animation: 'pulse-slow 10s ease-in-out infinite alternate-reverse'
         }}></div>
         
-        {/* Matrix code rain effect */}
-        <div className="matrix-code">
-          {[...Array(15)].map((_, i) => (
-            <div 
-              key={`code-${i}`} 
-              className="code-line"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `-${Math.random() * 50}px`,
-                opacity: Math.random() * 0.5 + 0.25,
-                animationDuration: `${Math.random() * 10 + 5}s`,
-                animationDelay: `${Math.random() * 5}s`
-              }}
-            >
-              {Array.from({ length: Math.floor(Math.random() * 20) + 10 }, () => 
-                String.fromCharCode(Math.floor(Math.random() * 93) + 33)
-              ).join('')}
-            </div>
-          ))}
-        </div>
+        {/* Matrix code rain effect - Empty div as placeholder for client-side rendering */}
+        <div className="matrix-code" id="matrix-code-container"></div>
+        <MatrixCodeRain />
         
         {/* Decorative elements */}
         {[...Array(6)].map((_, i) => (
@@ -304,24 +351,35 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <a 
-                href="https://github.com/wxmohd/PhishSecure" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="cyber-button"
-                style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '0.5rem', 
-                  fontSize: '0.875rem',
-                  padding: '0.5rem 1rem'
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-                </svg>
-                <span>GitHub</span>
-              </a>
+              <div style={{
+                padding: '0.25rem 0.75rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                <a 
+                  href="https://github.com/wxmohd/PhishSecure" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem',
+                    color: '#bfdbfe',
+                    textDecoration: 'none'
+                  }}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style={{
+                    color: '#22d3ee'
+                  }}>
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                  </svg>
+                  <span style={{ fontSize: '0.75rem' }}>GitHub</span>
+                </a>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -408,7 +466,7 @@ export default function Home() {
               transition={{ 
                 duration: 2.5, 
                 delay: 1,
-                ease: 'steps(40, end)'
+                ease: "easeInOut"
               }}
             >
               Detect. Analyze. Protect.

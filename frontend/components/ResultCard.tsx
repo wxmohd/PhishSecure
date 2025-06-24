@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { AnalysisResult } from '../utils/api';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { AnalysisResult } from '../utils/api';
 
 interface ResultCardProps {
   result: AnalysisResult;
