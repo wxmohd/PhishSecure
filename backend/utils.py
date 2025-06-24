@@ -1,7 +1,10 @@
 import re
 import string
 import os
-import random
+import pickle
+import numpy as np
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 def preprocess_email(email_content):
     """Clean and preprocess email content"""
@@ -54,53 +57,52 @@ def extract_flags(email_content):
     
     return flags
 
+# Global variables to store loaded model and tokenizer
+_model = None
+_tokenizer = None
+_max_sequence_length = 100  # Default value, will be determined by model input shape
+
+def _load_model_and_tokenizer():
+    """Load the LSTM model and tokenizer from files"""
+    global _model, _tokenizer, _max_sequence_length
+    
+    if _model is None:
+        model_path = os.path.join(os.path.dirname(__file__), 'model', 'phishing_lstm_model.h5')
+        _model = load_model(model_path)
+        # Get the input shape from the model to determine the sequence length
+        _max_sequence_length = _model.input_shape[1]
+    
+    if _tokenizer is None:
+        tokenizer_path = os.path.join(os.path.dirname(__file__), 'model', 'tokenizer.pickle')
+        with open(tokenizer_path, 'rb') as handle:
+            _tokenizer = pickle.load(handle)
+    
+    return _model, _tokenizer
+
 def predict_phishing(email_content):
-    """Predict if an email is phishing using rule-based approach"""
+    """Predict if an email is phishing using the pre-trained LSTM model"""
     # Preprocess the email
     cleaned_text = preprocess_email(email_content)
     
-    # Extract flags
+    # Extract flags for additional context (not used in prediction)
     flags = extract_flags(email_content)
     
-    # Calculate a phishing score based on the number of flags
-    phishing_score = len(flags) * 20  # Each flag adds 20% to the phishing score
+    # Load the model and tokenizer
+    model, tokenizer = _load_model_and_tokenizer()
     
-    # Add additional scoring based on common phishing indicators
-    lower_email = email_content.lower()
+    # Tokenize the text
+    sequences = tokenizer.texts_to_sequences([cleaned_text])
     
-    # Check for urgent language
-    urgent_phrases = ['urgent', 'immediate action', 'account suspended', 'verify your account',
-                     'security alert', 'unusual activity', 'problem with your account']
-    for phrase in urgent_phrases:
-        if phrase in lower_email:
-            phishing_score += 10
+    # Pad the sequences to a fixed length
+    padded_sequences = pad_sequences(sequences, maxlen=_max_sequence_length)
     
-    # Check for suspicious URLs
-    if re.search(r'https?://\d+\.\d+\.\d+\.\d+', lower_email):
-        phishing_score += 30  # IP address in URL is highly suspicious
+    # Make prediction
+    prediction = model.predict(padded_sequences, verbose=0)[0][0]
     
-    # Check for domain mismatches
-    if 'paypal' in lower_email and re.search(r'https?://(?!.*paypal\.com)', lower_email):
-        phishing_score += 25
-    if 'amazon' in lower_email and re.search(r'https?://(?!.*amazon\.com)', lower_email):
-        phishing_score += 25
-    if 'microsoft' in lower_email and re.search(r'https?://(?!.*microsoft\.com)', lower_email):
-        phishing_score += 25
+    # Convert prediction to percentage
+    phishing_score = float(prediction) * 100
     
-    # Check for requests for sensitive information
-    sensitive_info = ['password', 'credit card', 'social security', 'ssn', 'bank account',
-                     'username and password', 'login details']
-    for info in sensitive_info:
-        if info in lower_email:
-            phishing_score += 15
-    
-    # Cap the score at 100%
-    phishing_score = min(phishing_score, 100)
-    
-    # Add some randomness to simulate ML model behavior (±5%)
-    phishing_score = min(100, max(0, phishing_score + random.uniform(-5, 5)))
-    
-    # Determine verdict based on score threshold
+    # Determine verdict based on threshold (0.5 or 50%)
     is_phishing = phishing_score > 50
     
     return {
