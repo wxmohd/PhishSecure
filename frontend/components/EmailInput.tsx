@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) => {
+export const EmailInput = ({ onSubmit, isLoading, hasResult, onReset }: { onSubmit: (email: string) => void, isLoading: boolean, hasResult: boolean, onReset: () => void }) => {
   const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [validationMessage, setValidationMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [typingTimer, setTypingTimer] = useState<NodeJS.Timeout | null>(null);
@@ -62,8 +61,17 @@ export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // If we already have results and button is in "Analyze again" state
+    if (hasResult && !isLoading) {
+      // Reset the form and state
+      setEmail('');
+      onReset();
+      return;
+    }
+    
+    // Normal submission flow
     if (email.trim()) {
-      setIsLoading(true);
       onSubmit(email);
     }
   };
@@ -71,49 +79,138 @@ export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) 
   return (
     <motion.div style={{ width: '100%' }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <div style={{ marginBottom: '1.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-          <div style={{ width: '0.25rem', height: '1.5rem', backgroundColor: '#3b82f6', borderRadius: '9999px' }}></div>
-          <label htmlFor="email-input" style={{ fontSize: '0.875rem', fontWeight: 500, color: '#bfdbfe' }}>Paste suspicious email content</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+          <div style={{ 
+            width: '0.25rem', 
+            height: '1.5rem', 
+            background: 'linear-gradient(to bottom, #4ade80, #10b981)',
+            borderRadius: '9999px',
+            boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)'
+          }}></div>
+          <label htmlFor="email-input" style={{ 
+            fontSize: '0.875rem', 
+            fontWeight: 500, 
+            color: '#4ade80',
+            letterSpacing: '0.02em'
+          }}>Paste suspicious email content</label>
         </div>
         
         <form onSubmit={handleSubmit}>
           <div style={{ position: 'relative' }}>
-            <textarea
-              id="email-input"
-              value={email}
-              onChange={handleEmailChange}
-              placeholder="Paste the email content here..."
-              style={{
-                width: '100%',
-                height: '10rem',
-                padding: '1rem',
-                borderRadius: '0.5rem',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(30, 64, 175, 0.5)',
-                color: 'white',
-                resize: 'none',
-                backdropFilter: 'blur(4px)',
-                boxShadow: 'inset 0 2px 4px 0 rgba(30, 58, 138, 0.2)',
-                outline: 'none'
-              }}
-              className="white-placeholder"
-              onFocus={(e) => {
-                e.target.style.borderColor = 'rgba(59, 130, 246, 0.5)';
-                e.target.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.2), inset 0 2px 4px 0 rgba(30, 58, 138, 0.2)';
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(30, 64, 175, 0.5)';
-                e.target.style.boxShadow = 'inset 0 2px 4px 0 rgba(30, 58, 138, 0.2)';
-              }}
-              disabled={isLoading}
-            />
+            <div style={{
+              position: 'relative',
+              width: '100%',
+              borderRadius: '0.75rem',
+              padding: '2px',
+              background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.5), rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.5))',
+              boxShadow: '0 0 15px rgba(16, 185, 129, 0.2)',
+              overflow: 'hidden'
+            }}>
+              {/* Animated border effect */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '0.75rem',
+                padding: '2px',
+                background: 'linear-gradient(135deg, rgba(74, 222, 128, 0.8), rgba(16, 185, 129, 0.3), rgba(52, 211, 153, 0.8))',
+                opacity: 0.5,
+                animation: 'borderGlow 3s ease infinite alternate',
+                zIndex: 0
+              }}></div>
+              
+              <textarea
+                id="email-input"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="Paste the email content here..."
+                style={{
+                  width: '100%',
+                  height: '10rem',
+                  padding: '1rem',
+                  borderRadius: '0.65rem',
+                  backgroundColor: 'rgba(10, 14, 18, 0.7)',
+                  border: 'none',
+                  color: 'var(--text-primary)',
+                  resize: 'none',
+                  backdropFilter: 'blur(4px)',
+                  position: 'relative',
+                  zIndex: 1,
+                  outline: 'none',
+                  fontFamily: '"Space Grotesk", sans-serif',
+                  letterSpacing: '0.01em',
+                  transition: 'all 0.3s ease'
+                }}
+                className="white-placeholder"
+                onFocus={(e) => {
+                  const parentDiv = e.target.parentElement;
+                  if (parentDiv) {
+                    parentDiv.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.4)';
+                    parentDiv.style.transform = 'scale(1.005)';
+                  }
+                }}
+                onBlur={(e) => {
+                  const parentDiv = e.target.parentElement;
+                  if (parentDiv) {
+                    parentDiv.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.2)';
+                    parentDiv.style.transform = 'scale(1)';
+                  }
+                }}
+                disabled={isLoading}
+              />
+              
+              {/* Corner accents */}
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '10px',
+                height: '10px',
+                borderTop: '2px solid rgba(74, 222, 128, 0.8)',
+                borderLeft: '2px solid rgba(74, 222, 128, 0.8)',
+                borderTopLeftRadius: '0.65rem',
+                zIndex: 2
+              }}></div>
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '10px',
+                height: '10px',
+                borderTop: '2px solid rgba(74, 222, 128, 0.8)',
+                borderRight: '2px solid rgba(74, 222, 128, 0.8)',
+                borderTopRightRadius: '0.65rem',
+                zIndex: 2
+              }}></div>
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                width: '10px',
+                height: '10px',
+                borderBottom: '2px solid rgba(74, 222, 128, 0.8)',
+                borderLeft: '2px solid rgba(74, 222, 128, 0.8)',
+                borderBottomLeftRadius: '0.65rem',
+                zIndex: 2
+              }}></div>
+              <div style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: '10px',
+                height: '10px',
+                borderBottom: '2px solid rgba(74, 222, 128, 0.8)',
+                borderRight: '2px solid rgba(74, 222, 128, 0.8)',
+                borderBottomRightRadius: '0.65rem',
+                zIndex: 2
+              }}></div>
+            </div>
             
             {/* Email validation message */}
             {isTyping && email.trim() && (
               <div style={{ 
                 marginTop: '0.5rem', 
                 fontSize: '0.875rem', 
-                color: '#93c5fd',
+                color: '#4ade80',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.25rem'
@@ -149,14 +246,14 @@ export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) 
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
             <button 
               type="submit"
-              disabled={isLoading || (!!validationMessage && !isTyping)}
+              disabled={(isLoading && !hasResult) || (!!validationMessage && !isTyping && !hasResult)}
               style={{
                 padding: '0.75rem 1.5rem',
                 borderRadius: '0.5rem',
-                background: 'linear-gradient(to right, #3b82f6, #8b5cf6)',
+                background: 'linear-gradient(to right, #4ade80, #10b981)',
                 color: 'white',
                 fontWeight: 500,
-                boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.3)',
+                boxShadow: '0 10px 15px -3px rgba(16, 185, 129, 0.3)',
                 transition: 'all 0.2s ease',
                 cursor: (isLoading || (!!validationMessage && !isTyping)) ? 'not-allowed' : 'pointer',
                 opacity: (isLoading || (!!validationMessage && !isTyping)) ? 0.7 : 1,
@@ -165,18 +262,18 @@ export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) 
               }}
               onMouseOver={(e) => {
                 if (!isLoading && !validationMessage) {
-                  e.currentTarget.style.background = 'linear-gradient(to right, #2563eb, #7c3aed)';
-                  e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(59, 130, 246, 0.4)';
+                  e.currentTarget.style.background = 'linear-gradient(to right, #10b981, #059669)';
+                  e.currentTarget.style.boxShadow = '0 15px 20px -3px rgba(16, 185, 129, 0.4)';
                 }
               }}
               onMouseOut={(e) => {
                 if (!isLoading && !validationMessage) {
-                  e.currentTarget.style.background = 'linear-gradient(to right, #3b82f6, #8b5cf6)';
-                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.3)';
+                  e.currentTarget.style.background = 'linear-gradient(to right, #4ade80, #10b981)';
+                  e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(16, 185, 129, 0.3)';
                 }
               }}
             >
-              {isLoading ? (
+              {isLoading && !hasResult ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <div style={{ 
                     width: '1rem', 
@@ -188,7 +285,7 @@ export const EmailInput = ({ onSubmit }: { onSubmit: (email: string) => void }) 
                   }} />
                   <span>Analyzing...</span>
                 </div>
-              ) : 'Analyze Email'}
+              ) : hasResult ? 'Analyze again' : 'Analyze Email'}
             </button>
           </div>
         </form>

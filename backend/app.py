@@ -1,13 +1,9 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
-import sys
 
-# Add the current directory to sys.path to ensure imports work correctly
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-# Import from utils.py file directly
-from utils import preprocess_email, extract_flags, predict_phishing
+# Import from email_utils.py file directly
+from email_utils import preprocess_email, extract_flags, predict_phishing
 
 # Init Flask app
 app = Flask(__name__)

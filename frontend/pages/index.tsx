@@ -1,10 +1,104 @@
 // index.tsx
 import Head from 'next/head';
 import { EmailInput } from '../components/EmailInput';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { analyzeEmail, AnalysisResult } from '../utils/api';
 import ResultCard from '../components/ResultCard';
+
+// Animated particles component
+const ParticlesBackground = () => {
+  useEffect(() => {
+    // Create particles
+    const particlesContainer = document.querySelector('.particles-bg');
+    const particleCount = 50;
+    
+    if (particlesContainer) {
+      // Clear any existing particles
+      particlesContainer.innerHTML = '';
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random position
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+        particle.style.left = `${x}%`;
+        particle.style.top = `${y}%`;
+        
+        // Random size
+        const size = Math.random() * 3 + 1;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        
+        // Random opacity
+        particle.style.opacity = (Math.random() * 0.5 + 0.3).toString();
+        
+        // Animation
+        particle.style.animation = `float ${Math.random() * 10 + 5}s ease-in-out infinite`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+    
+    return () => {
+      if (particlesContainer) {
+        particlesContainer.innerHTML = '';
+      }
+    };
+  }, []);
+  
+  return <div className="particles-bg" />;
+};
+
+// Radar scanning animation component
+const ScannerAnimation = () => {
+  return (
+    <div className="scanner" style={{
+      width: '120px',
+      height: '120px',
+      borderRadius: '50%',
+      border: '2px solid rgba(74, 222, 128, 0.5)',
+      margin: '0 auto 2.5rem auto',
+      position: 'relative',
+      boxShadow: '0 0 15px rgba(74, 222, 128, 0.3), inset 0 0 10px rgba(16, 185, 129, 0.2)'
+    }}>
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: '50%',
+        height: '2px',
+        background: 'linear-gradient(to right, rgba(74, 222, 128, 1), rgba(16, 185, 129, 0.7))',
+        transformOrigin: 'left center',
+        animation: 'spin 2s linear infinite',
+        boxShadow: '0 0 8px rgba(74, 222, 128, 0.8)'
+      }} />
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: '12px',
+        height: '12px',
+        borderRadius: '50%',
+        backgroundColor: '#4ade80',
+        boxShadow: '0 0 10px rgba(74, 222, 128, 0.8)',
+        animation: 'pulse 2s ease-in-out infinite'
+      }} />
+      <div className="scanner-grid" style={{
+        position: 'absolute',
+        inset: '0',
+        borderRadius: '50%',
+        background: 'radial-gradient(circle, transparent 0%, transparent 70%, rgba(74, 222, 128, 0.1) 100%)',
+        backgroundSize: '10px 10px',
+        opacity: 0.5
+      }}></div>
+    </div>
+  );
+};
 
 export default function Home() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -37,104 +131,199 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen text-white" style={{ background: 'linear-gradient(to bottom right, #1e3a8a, #312e81, #4c1d95)' }}>
+    <div className="min-h-screen text-white">
       <Head>
         <title>PhishSecure | Email Security</title>
         <meta name="description" content="AI-Powered Phishing Email Detection" />
         <link rel="icon" href="/favicon.ico" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
       </Head>
 
-      {/* Animated background elements */}
+      {/* Animated particles background */}
+      <ParticlesBackground />
+      
+      {/* Cyberpunk grid overlay */}
+      <div className="cyber-grid"></div>
+      
+      {/* Animated glow elements */}
       <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        {/* Primary glow */}
         <div style={{ 
           position: 'absolute', 
-          top: '25%', 
-          left: '25%', 
-          width: '16rem', 
-          height: '16rem', 
-          backgroundColor: '#3b82f6', 
-          borderRadius: '9999px', 
-          mixBlendMode: 'multiply', 
-          filter: 'blur(64px)', 
-          opacity: 0.2,
-          animation: 'blob 7s infinite'
+          top: '10%', 
+          left: '5%', 
+          width: '30rem', 
+          height: '30rem', 
+          background: 'radial-gradient(circle, rgba(74, 222, 128, 0.8), rgba(16, 185, 129, 0.5))',
+          filter: 'blur(90px)', 
+          opacity: 0.15,
+          borderRadius: '50%',
+          zIndex: -1,
+          animation: 'pulse-slow 8s ease-in-out infinite alternate'
         }}></div>
+        
+        {/* Secondary glow */}
         <div style={{ 
           position: 'absolute', 
-          top: '33%', 
-          right: '25%', 
-          width: '18rem', 
-          height: '18rem', 
-          backgroundColor: '#8b5cf6', 
-          borderRadius: '9999px', 
-          mixBlendMode: 'multiply', 
-          filter: 'blur(64px)', 
-          opacity: 0.2,
-          animation: 'blob 7s infinite',
-          animationDelay: '2s'
+          bottom: '10%', 
+          right: '5%', 
+          width: '25rem', 
+          height: '25rem', 
+          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.8), rgba(16, 185, 129, 0.5))',
+          filter: 'blur(70px)', 
+          opacity: 0.15,
+          borderRadius: '50%',
+          zIndex: -1,
+          animation: 'pulse-slow 10s ease-in-out infinite alternate-reverse'
         }}></div>
-        <div style={{ 
-          position: 'absolute', 
-          bottom: '25%', 
-          right: '33%', 
-          width: '20rem', 
-          height: '20rem', 
-          backgroundColor: '#6366f1', 
-          borderRadius: '9999px', 
-          mixBlendMode: 'multiply', 
-          filter: 'blur(64px)', 
-          opacity: 0.2,
-          animation: 'blob 7s infinite',
-          animationDelay: '4s'
-        }}></div>
+        
+        {/* Matrix code rain effect */}
+        <div className="matrix-code">
+          {[...Array(15)].map((_, i) => (
+            <div 
+              key={`code-${i}`} 
+              className="code-line"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `-${Math.random() * 50}px`,
+                opacity: Math.random() * 0.5 + 0.25,
+                animationDuration: `${Math.random() * 10 + 5}s`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            >
+              {Array.from({ length: Math.floor(Math.random() * 20) + 10 }, () => 
+                String.fromCharCode(Math.floor(Math.random() * 93) + 33)
+              ).join('')}
+            </div>
+          ))}
+        </div>
+        
+        {/* Decorative elements */}
+        {[...Array(6)].map((_, i) => (
+          <div 
+            key={`dot-${i}`} 
+            className="decorative-dot" 
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              opacity: Math.random() * 0.5 + 0.3
+            }}
+          />
+        ))}
+        
+        {[...Array(4)].map((_, i) => (
+          <div 
+            key={`trace-${i}`} 
+            className="circuit-trace" 
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              transform: `rotate(${Math.random() * 360}deg)`,
+              width: `${Math.random() * 100 + 50}px`
+            }}
+          />
+        ))}
       </div>
 
-      {/* Header */}
-      <header style={{ position: 'relative', zIndex: 10, paddingTop: '1.5rem', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '80rem', marginLeft: 'auto', marginRight: 'auto' }}>
+      {/* Header - Cyberpunk Style */}
+      <header style={{ 
+        position: 'relative', 
+        zIndex: 10, 
+        padding: '1.5rem',
+        borderBottom: '1px solid rgba(59, 130, 246, 0.2)'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          maxWidth: '90rem', 
+          marginLeft: 'auto', 
+          marginRight: 'auto'
+        }}>
           <motion.div 
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            className="neon-border"
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              borderRadius: '0.5rem'
+            }}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
             <div style={{ 
-              background: 'linear-gradient(to right, #22d3ee, #3b82f6)', 
+              background: 'linear-gradient(to right, #4ade80, #10b981)', 
               padding: '0.5rem', 
-              borderRadius: '0.5rem' 
+              borderRadius: '0.5rem',
+              boxShadow: '0 0 10px rgba(74, 222, 128, 0.5)'
             }}>
               <span style={{ fontSize: '1.25rem' }}>🛡️</span>
             </div>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '-0.025em' }}>PhishSecure</h2>
+            <h2 style={{ 
+              fontSize: '1.5rem', 
+              fontWeight: 'bold', 
+              letterSpacing: '-0.025em',
+              background: 'linear-gradient(to right, #4ade80, #10b981, #059669)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>PhishSecure</h2>
           </motion.div>
           
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <a 
-              href="https://github.com/wxmohd/PhishSecure" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.25rem', 
-                fontSize: '0.875rem', 
-                color: '#bfdbfe', 
-                transition: 'color 0.2s' 
-              }}
-              onMouseOver={(e) => e.currentTarget.style.color = '#ffffff'}
-              onMouseOut={(e) => e.currentTarget.style.color = '#bfdbfe'}
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
-              </svg>
-              <span>GitHub</span>
-            </a>
-          </motion.div>
+              <div style={{
+                padding: '0.25rem 0.75rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem'
+              }}>
+                <span style={{
+                  width: '0.5rem',
+                  height: '0.5rem',
+                  borderRadius: '50%',
+                  backgroundColor: '#22d3ee',
+                  boxShadow: '0 0 8px #22d3ee',
+                  animation: 'pulse 2s infinite'
+                }}></span>
+                <span style={{ fontSize: '0.75rem', color: '#bfdbfe' }}>AI Powered</span>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <a 
+                href="https://github.com/wxmohd/PhishSecure" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="cyber-button"
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem', 
+                  fontSize: '0.875rem',
+                  padding: '0.5rem 1rem'
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                <span>GitHub</span>
+              </a>
+            </motion.div>
+          </div>
         </div>
       </header>
 
@@ -163,334 +352,170 @@ export default function Home() {
               padding: '0.5rem 0.75rem',
               marginBottom: '1.5rem',
               borderRadius: '9999px',
-              background: 'linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
+              background: 'linear-gradient(to right, rgba(74, 222, 128, 0.2), rgba(16, 185, 129, 0.15))',
               backdropFilter: 'blur(4px)',
-              border: '1px solid rgba(59, 130, 246, 0.3)'
+              border: '1px solid rgba(74, 222, 128, 0.4)',
+              boxShadow: '0 0 10px rgba(74, 222, 128, 0.2)'
             }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#bfdbfe' }}>AI-Powered Email Security</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#4ade80', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Neural Shield Active</span>
             </div>
             
             <h1 style={{ 
               fontSize: 'clamp(2rem, 5vw, 3.75rem)', 
-              fontWeight: 'bold', 
+              fontWeight: '800', 
               marginBottom: '1.5rem', 
               fontFamily: '"Space Grotesk", sans-serif',
-              lineHeight: '1.1'
+              lineHeight: '1.1',
+              letterSpacing: '-0.02em'
             }}>
               <span style={{ 
                 backgroundClip: 'text', 
                 WebkitBackgroundClip: 'text',
                 color: 'transparent', 
-                backgroundImage: 'linear-gradient(to right, #22d3ee, #3b82f6, #8b5cf6)'
-              }}>Detect Phishing</span>
-              <br />Before It's Too Late
+                backgroundImage: 'linear-gradient(to right, #4ade80, #10b981, #059669)',
+                textShadow: '0 0 25px rgba(16, 185, 129, 0.5)'
+              }}>AI That Hunts Threats</span>
+              <br /><span style={{ color: 'var(--text-bright)' }}>Before You Click</span>
             </h1>
             
-            <p style={{ fontSize: '1.125rem', color: '#e0f2fe', marginBottom: '2rem', maxWidth: '32rem' }}>
-              Our advanced AI analyzes suspicious emails in seconds to protect you from phishing attacks and social engineering threats.
+            <p style={{ 
+              fontSize: '1.125rem', 
+              color: 'var(--text-primary)', 
+              marginBottom: '2rem', 
+              maxWidth: '32rem',
+              lineHeight: '1.6',
+              fontWeight: '300',
+              letterSpacing: '0.01em'
+            }}>
+              <span style={{ color: '#4ade80', fontWeight: '500' }}>Ruthless precision.</span> Our quantum-enhanced AI scans emails in milliseconds, neutralizing phishing threats before they breach your digital perimeter.
             </p>
             
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>              
-              <a 
-                href="#how-it-works" 
-                style={{
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '0.5rem',
-                  backgroundColor: 'rgba(30, 58, 138, 0.5)',
-                  backdropFilter: 'blur(4px)',
-                  border: '1px solid rgba(29, 78, 216, 0.5)',
-                  color: '#e0f2fe',
-                  fontWeight: 500,
-                  transition: 'background-color 0.2s ease',
-                  display: 'inline-block',
-                  textDecoration: 'none'
-                }}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(30, 64, 175, 0.5)';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(30, 58, 138, 0.5)';
-                }}
-              >
-                How It Works
-              </a>
-            </div>
+            <motion.div 
+              className="terminal-text" 
+              style={{ 
+                fontSize: '1.5rem', 
+                fontFamily: '"JetBrains Mono", monospace', 
+                marginBottom: '2rem',
+                color: '#4ade80',
+                borderRight: '0.15em solid #4ade80',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                letterSpacing: '0.15em',
+                textShadow: '0 0 8px rgba(74, 222, 128, 0.7)'
+              }}
+              initial={{ width: '0%' }}
+              animate={{ width: '100%' }}
+              transition={{ 
+                duration: 2.5, 
+                delay: 1,
+                ease: 'steps(40, end)'
+              }}
+            >
+              Detect. Analyze. Protect.
+            </motion.div>
             
-            <div style={{ marginTop: '2.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ display: 'flex', marginRight: '-0.5rem' }}>
-                <div style={{ width: '2rem', height: '2rem', borderRadius: '9999px', background: 'linear-gradient(to right, #ec4899, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem' }}>🔒</div>
-                <div style={{ width: '2rem', height: '2rem', borderRadius: '9999px', background: 'linear-gradient(to right, #3b82f6, #06b6d4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', marginLeft: '-0.5rem' }}>🛡️</div>
-                <div style={{ width: '2rem', height: '2rem', borderRadius: '9999px', background: 'linear-gradient(to right, #10b981, #059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', marginLeft: '-0.5rem' }}>✓</div>
+            <ScannerAnimation />
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', marginBottom: '2rem' }}>              
+              <div className="glass-card" style={{ 
+                padding: '1.25rem', 
+                width: '100%', 
+                maxWidth: '18rem',
+                borderLeft: '3px solid #10b981',
+                background: 'var(--terminal-gradient)',
+                boxShadow: '0 0 15px rgba(16, 185, 129, 0.15)'
+              }}>
+                <div style={{ 
+                  fontSize: '0.875rem', 
+                  color: '#4ade80', 
+                  marginBottom: '0.5rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: '500'
+                }}>Threat Detection</div>
+                <div style={{ 
+                  fontSize: '1.75rem', 
+                  fontWeight: 'bold', 
+                  color: '#10b981',
+                  fontFamily: '"JetBrains Mono", monospace'
+                }}>99.7<span style={{ fontSize: '1.25rem', opacity: 0.8 }}>%</span></div>
               </div>
-              <span style={{ fontSize: '0.875rem', color: '#bfdbfe' }}>Trusted by <span style={{ fontWeight: 600 }}>2,000+</span> users</span>
             </div>
           </motion.div>
           
           {/* Right column - Email analyzer */}
           <motion.div
             id="analyzer"
-            style={{
-              position: 'relative',
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(16px)',
-              borderRadius: '1rem',
-              padding: '0.25rem',
-              boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.1)'
-            }}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
           >
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
-              borderRadius: '1rem',
-              filter: 'blur(16px)',
-              zIndex: -1
-            }}></div>
-            
-            <div style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white' }}>Email Analyzer</h2>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '0.25rem', 
-                  padding: '0.25rem 0.75rem', 
-                  borderRadius: '9999px', 
-                  backgroundColor: 'rgba(30, 58, 138, 0.5)', 
-                  fontSize: '0.75rem', 
-                  fontWeight: 500, 
-                  color: '#bfdbfe' 
-                }}>
-                  <span style={{ 
-                    width: '0.5rem', 
-                    height: '0.5rem', 
-                    borderRadius: '9999px', 
-                    backgroundColor: '#34d399',
-                    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                  }}></span>
-                  <span>AI Powered</span>
-                </div>
-              </div>
+            <div className="glass-card neon-border" style={{ 
+              padding: '2rem',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div className="corner-accent top-left"></div>
+              <div className="corner-accent top-right"></div>
+              <div className="corner-accent bottom-left"></div>
+              <div className="corner-accent bottom-right"></div>
               
-              <EmailInput onSubmit={handleEmailSubmit} />
-              
-              {isAnalyzing && (
-                <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2rem 0' }}>
-                  <div style={{ 
-                    width: '3rem', 
-                    height: '3rem', 
-                    borderRadius: '9999px', 
-                    border: '4px solid #bfdbfe', 
-                    borderTopColor: '#2563eb',
-                    animation: 'spin 1s linear infinite',
-                    marginBottom: '1rem'
-                  }}></div>
-                  <p style={{ color: '#bfdbfe', fontSize: '0.875rem' }}>Analyzing email content...</p>
-                </div>
-              )}
-              
-              {error && (
-                <div style={{ 
-                  marginTop: '1.5rem', 
-                  padding: '1rem', 
-                  borderRadius: '0.5rem', 
-                  backgroundColor: 'rgba(254, 226, 226, 0.2)', 
-                  border: '1px solid rgba(248, 113, 113, 0.3)',
-                  color: '#fca5a5'
-                }}>
-                  <p>{error}</p>
-                </div>
-              )}
-              
-              {analysisResult && !isAnalyzing && (
-                <motion.div 
+              <EmailInput 
+                onSubmit={handleEmailSubmit} 
+                isLoading={isAnalyzing} 
+                hasResult={!!analysisResult}
+                onReset={handleReset}
+              />
+            </div>
+
+            <AnimatePresence>
+              {analysisResult && (
+                <motion.div
+                  key="result-card"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  style={{ marginTop: '1.5rem' }}
+                  className="mt-6"
                 >
-                  <ResultCard result={analysisResult} onReset={handleReset} />
+                  <ResultCard 
+                    result={analysisResult} 
+                    onReset={handleReset}
+                  />
                 </motion.div>
               )}
-            </div>
+            </AnimatePresence>
           </motion.div>
         </div>
-        
-        {/* Features section */}
-        <motion.section 
-          id="how-it-works"
-          style={{ marginTop: '6rem', marginBottom: '4rem' }}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: '1.875rem', fontWeight: 'bold', marginBottom: '1rem' }}>How PhishSecure Works</h2>
-            <p style={{ color: '#bfdbfe', maxWidth: '42rem', marginLeft: 'auto', marginRight: 'auto' }}>Our advanced AI model analyzes email content to identify potential phishing attempts and keep you safe.</p>
-          </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem' }}>
-            {/* Feature 1 */}
-            <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(4px)',
-              borderRadius: '0.75rem',
-              padding: '1.5rem',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.border = '1px solid rgba(59, 130, 246, 0.5)';
-              e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}>
-              <div style={{
-                width: '3rem',
-                height: '3rem',
-                borderRadius: '0.5rem',
-                background: 'linear-gradient(to bottom right, #3b82f6, #22d3ee)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '1rem',
-                fontSize: '1.25rem'
-              }}>📧</div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem' }}>Email Analysis</h3>
-              <p style={{ color: '#bfdbfe' }}>Paste any suspicious email content and our AI will analyze it for common phishing patterns.</p>
-            </div>
-            
-            {/* Feature 2 */}
-            <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(4px)',
-              borderRadius: '0.75rem',
-              padding: '1.5rem',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.border = '1px solid rgba(59, 130, 246, 0.5)';
-              e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}>
-              <div style={{
-                width: '3rem',
-                height: '3rem',
-                borderRadius: '0.5rem',
-                background: 'linear-gradient(to bottom right, #8b5cf6, #ec4899)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '1rem',
-                fontSize: '1.25rem'
-              }}>🔍</div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem' }}>Threat Detection</h3>
-              <p style={{ color: '#bfdbfe' }}>Our model identifies suspicious links, spoofed domains, and social engineering tactics.</p>
-            </div>
-            
-            {/* Feature 3 */}
-            <div style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(4px)',
-              borderRadius: '0.75rem',
-              padding: '1.5rem',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.border = '1px solid rgba(59, 130, 246, 0.5)';
-              e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(59, 130, 246, 0.1)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}>
-              <div style={{
-                width: '3rem',
-                height: '3rem',
-                borderRadius: '0.5rem',
-                background: 'linear-gradient(to bottom right, #10b981, #34d399)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: '1rem',
-                fontSize: '1.25rem'
-              }}>🛡️</div>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.75rem' }}>Instant Results</h3>
-              <p style={{ color: '#bfdbfe' }}>Get immediate feedback on whether an email is legitimate or potentially dangerous.</p>
-            </div>
-          </div>
-        </motion.section>
-        
-        {/* Footer */}
-        <footer style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '2rem', paddingBottom: '4rem' }}>
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            justifyContent: 'space-between', 
-            alignItems: 'center'
-          }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ 
-                  width: '2rem', 
-                  height: '2rem', 
-                  borderRadius: '9999px', 
-                  background: 'linear-gradient(to right, #3b82f6, #8b5cf6)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  marginRight: '0.5rem' 
-                }}>
-                  <span style={{ color: 'white', fontWeight: 'bold' }}>P</span>
-                </div>
-                <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>PhishSecure</span>
-              </div>
-              <p style={{ fontSize: '0.875rem', color: '#bfdbfe', marginTop: '0.5rem' }}> 2024 PhishSecure. All rights reserved.</p>
-            </div>
-            
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
-              <a 
-                href="#" 
-                style={{ color: '#bfdbfe', transition: 'color 0.2s ease' }}
-                onMouseOver={(e) => { e.currentTarget.style.color = 'white'; }}
-                onMouseOut={(e) => { e.currentTarget.style.color = '#bfdbfe'; }}
-              >
-                Privacy Policy
-              </a>
-              <a 
-                href="#" 
-                style={{ color: '#bfdbfe', transition: 'color 0.2s ease' }}
-                onMouseOver={(e) => { e.currentTarget.style.color = 'white'; }}
-                onMouseOut={(e) => { e.currentTarget.style.color = '#bfdbfe'; }}
-              >
-                Terms of Service
-              </a>
-              <a 
-                href="#" 
-                style={{ color: '#bfdbfe', transition: 'color 0.2s ease' }}
-                onMouseOver={(e) => { e.currentTarget.style.color = 'white'; }}
-                onMouseOut={(e) => { e.currentTarget.style.color = '#bfdbfe'; }}
-              >
-                Contact
-              </a>
-            </div>
-          </div>
-        </footer>
-        <div className="text-center mt-6 text-blue-400/70">
-            Built with by <span className="font-semibold text-blue-300">Walaa</span> | Powered by AI
-          </div>
       </motion.main>
+
+      <footer style={{ 
+        position: 'relative',
+        zIndex: 10,
+        padding: '2rem 1.5rem',
+        marginTop: '4rem',
+        borderTop: '1px solid rgba(59, 130, 246, 0.2)'
+      }}>
+        <div style={{ 
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          maxWidth: '90rem',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          fontSize: '0.875rem',
+          color: '#94a3b8'
+        }}>
+          <span>© 2023 PhishSecure. Developed with 💙 by </span>
+          <a 
+            href="https://linkedin.com/in/wxmohd" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="neon-text ml-1"
+          >
+            Walaa Mohammed
+          </a>
+        </div>
+      </footer>
     </div>
   );
 }
