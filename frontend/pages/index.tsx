@@ -468,7 +468,7 @@ export default function Home() {
                 ease: "easeInOut"
               }}
             >
-              <span style={{ letterSpacing: '0.15em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Protect</span><span>.</span>
+              <span style={{ letterSpacing: '0.15em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Protect</span><span>.</span><span style={{ marginLeft: '0.5rem' }}></span>
             </motion.div>
             
             <ScannerAnimation />
