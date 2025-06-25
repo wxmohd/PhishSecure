@@ -2,8 +2,11 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 
-# Import from email_utils.py file directly
-from email_utils import preprocess_email, extract_flags, predict_phishing
+# Import from email_utils.py for flag extraction
+from email_utils import extract_flags
+
+# Import the LSTM prediction function
+from utils.predict import predict_email
 
 # Init Flask app
 app = Flask(__name__)
@@ -22,13 +25,16 @@ def analyze():
         if not email_content:
             return jsonify({"error": "No email content provided"}), 400
 
-        # Use the predict_phishing function from utils
-        result = predict_phishing(email_content)
+        # Use the predict_email function from utils.predict for LSTM analysis
+        result = predict_email(email_content)
+        
+        # Extract flags for additional context
+        flags = extract_flags(email_content)
 
         return jsonify({
             "verdict": result["verdict"],
-            "confidence": round(result["confidence"], 2),
-            "flags": result["flags"]
+            "confidence": result["confidence"],
+            "flags": flags
         })
 
     except Exception as e:

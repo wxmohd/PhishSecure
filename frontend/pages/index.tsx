@@ -458,7 +458,6 @@ export default function Home() {
                 borderRight: '0.15em solid #4ade80',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                letterSpacing: '0.15em',
                 textShadow: '0 0 8px rgba(74, 222, 128, 0.7)'
               }}
               initial={{ width: '0%' }}
@@ -469,7 +468,7 @@ export default function Home() {
                 ease: "easeInOut"
               }}
             >
-              Detect. Analyze. Protect.
+              <span style={{ letterSpacing: '0.15em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Protect</span><span>.</span>
             </motion.div>
             
             <ScannerAnimation />

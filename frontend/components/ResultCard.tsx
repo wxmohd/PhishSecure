@@ -267,8 +267,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.75rem' }}>
                 <span style={{ fontSize: '1.125rem', fontWeight: 'bold', color: '#10b981' }}>✅</span>
                 <div>
-                  <h4 style={{ fontWeight: 500, color: '#047857', marginBottom: '0.25rem' }}>Email Appears Safe</h4>
-                  <p style={{ color: '#047857' }}>
+                  <h4 style={{ fontWeight: 600, color: 'white', marginBottom: '0.25rem', textShadow: '0 0 5px rgba(4, 120, 87, 0.5)' }}>Email Appears Safe</h4>
+                  <p style={{ color: 'white', textShadow: '0 0 3px rgba(4, 120, 87, 0.3)' }}>
                     This email appears to be legitimate with no suspicious elements detected.
                     Always practice good email security habits regardless.
                   </p>

@@ -123,12 +123,13 @@ export const EmailInput = ({ onSubmit, isLoading, hasResult, onReset }: { onSubm
                 value={email}
                 onChange={handleEmailChange}
                 placeholder="Paste the email content here..."
+                disabled={hasResult && !isLoading}
                 style={{
                   width: '100%',
                   height: '10rem',
                   padding: '1rem',
                   borderRadius: '0.65rem',
-                  backgroundColor: 'rgba(10, 14, 18, 0.7)',
+                  backgroundColor: hasResult && !isLoading ? 'rgba(10, 14, 18, 0.9)' : 'rgba(10, 14, 18, 0.7)',
                   border: 'none',
                   color: 'var(--text-primary)',
                   resize: 'none',
@@ -138,10 +139,13 @@ export const EmailInput = ({ onSubmit, isLoading, hasResult, onReset }: { onSubm
                   outline: 'none',
                   fontFamily: '"Space Grotesk", sans-serif',
                   letterSpacing: '0.01em',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  opacity: hasResult && !isLoading ? 0.7 : 1,
+                  cursor: hasResult && !isLoading ? 'not-allowed' : 'text'
                 }}
                 className="white-placeholder"
                 onFocus={(e) => {
+                  if (hasResult && !isLoading) return;
                   const parentDiv = e.target.parentElement;
                   if (parentDiv) {
                     parentDiv.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.4)';
@@ -149,13 +153,14 @@ export const EmailInput = ({ onSubmit, isLoading, hasResult, onReset }: { onSubm
                   }
                 }}
                 onBlur={(e) => {
+                  if (hasResult && !isLoading) return;
                   const parentDiv = e.target.parentElement;
                   if (parentDiv) {
                     parentDiv.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.2)';
                     parentDiv.style.transform = 'scale(1)';
                   }
                 }}
-                disabled={isLoading}
+
               />
               
               {/* Corner accents */}
