@@ -301,13 +301,13 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <div style={{ 
+            <div className="header-icon-container" style={{ 
               background: 'linear-gradient(to right, #4ade80, #10b981)', 
               padding: '0.5rem', 
               borderRadius: '0.5rem',
               boxShadow: '0 0 10px rgba(74, 222, 128, 0.5)'
             }}>
-              <span style={{ fontSize: '1.25rem' }}>🛡️</span>
+              <span style={{ fontSize: '1.25rem' }}>🔒</span>
             </div>
             <h2 style={{ 
               fontSize: '1.5rem', 
@@ -319,46 +319,22 @@ export default function Home() {
             }}>PhishSecure</h2>
           </motion.div>
           
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div style={{
-                padding: '0.25rem 0.75rem',
-                borderRadius: '9999px',
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <span style={{
-                  width: '0.5rem',
-                  height: '0.5rem',
-                  borderRadius: '50%',
-                  backgroundColor: '#22d3ee',
-                  boxShadow: '0 0 8px #22d3ee',
-                  animation: 'pulse 2s infinite'
-                }}></span>
-                <span style={{ fontSize: '0.75rem', color: '#bfdbfe' }}>AI Powered</span>
-              </div>
-            </motion.div>
-            
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <div style={{
+              <div className="header-badge" style={{
                 padding: '0.25rem 0.75rem',
                 borderRadius: '9999px',
                 backgroundColor: 'rgba(59, 130, 246, 0.2)',
                 border: '1px solid rgba(59, 130, 246, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem'
+                gap: '0.5rem',
+                width: '100%',
+                justifyContent: 'center'
               }}>
                 <a 
                   href="https://github.com/wxmohd/PhishSecure" 
@@ -373,12 +349,42 @@ export default function Home() {
                   }}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style={{
-                    color: '#22d3ee'
-                  }}>
+                    color: '#22d3ee',
+                    width: '16px',
+                    height: '16px'
+                  }} className="header-icon">
                     <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
                   </svg>
                   <span style={{ fontSize: '0.75rem' }}>GitHub</span>
                 </a>
+              </div>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <div className="header-badge" style={{
+                padding: '0.25rem 0.75rem',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                width: '100%',
+                justifyContent: 'center'
+              }}>
+                <span style={{
+                  width: '0.5rem',
+                  height: '0.5rem',
+                  borderRadius: '50%',
+                  backgroundColor: '#22d3ee',
+                  boxShadow: '0 0 8px #22d3ee',
+                  animation: 'pulse 2s infinite'
+                }}></span>
+                <span style={{ fontSize: '0.75rem', color: '#bfdbfe' }}>AI Powered</span>
               </div>
             </motion.div>
           </div>
@@ -458,7 +464,8 @@ export default function Home() {
                 borderRight: '0.15em solid #4ade80',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
-                textShadow: '0 0 8px rgba(74, 222, 128, 0.7)'
+                textShadow: '0 0 8px rgba(9, 104, 68, 0.7)',
+                paddingRight: '0.5rem' // Add padding after the text
               }}
               initial={{ width: '0%' }}
               animate={{ width: '100%' }}
@@ -468,7 +475,7 @@ export default function Home() {
                 ease: "easeInOut"
               }}
             >
-              <span style={{ letterSpacing: '0.15em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Protect</span><span>.</span><span style={{ marginLeft: '0.5rem' }}></span>
+              <span style={{ letterSpacing: '0.15em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Protect</span><span>.</span><span>&nbsp;&nbsp;</span>
             </motion.div>
             
             <ScannerAnimation />
