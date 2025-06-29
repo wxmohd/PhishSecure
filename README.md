@@ -1,25 +1,26 @@
 # 📧 Phishing Email Analyzer
 
-A web-based application that uses machine learning to detect phishing emails based on message content and structure. Users can paste an email or upload a `.eml` file, and the system will analyze the text for common phishing indicators and return a risk assessment.
+A web-based application that uses AI-powered machine learning to detect phishing **email domains** based on patterns and structure. Users can paste an email address or upload a `.eml` file, and the system will analyze the **sender domain** for phishing indicators and return a risk assessment.
 
 ---
 
 ## 🚀 Live Demo
-🌐 [Visit the app on Vercel]
+🌐 [Visit the app on Vercel]  
 🔗 [API deployed on Render]
 
 ---
 
 ## 🧠 Features
 
-- Paste raw email content or upload `.eml` files
-- Detect phishing vs legitimate emails using a trained ML model
-- Analyze:
-  - Suspicious links
-  - Spoofed sender domains
-  - Urgent or manipulative language
-  - Dangerous attachments
-- Get a clear verdict + confidence score + key flags
+- Paste sender email or upload `.eml` file
+- Analyze **sender domain** only (not full content)
+- Extract domain-based indicators:
+  - Typosquatting (e.g. `paypa1.com` instead of `paypal.com`)
+  - Suspicious TLDs (`.ru`, `.tk`, `.xyz`, etc.)
+  - Use of hyphens and digits in domain
+  - Unusual domain length (e.g. `support-login-secure-verify.com`)
+- Combines **ML classifiers + rule-based detection**
+- Returns verdict (`phishing` or `legitimate`), confidence score, and reasons
 
 ---
 
@@ -27,82 +28,111 @@ A web-based application that uses machine learning to detect phishing emails bas
 
 ### 🔍 Backend (Flask API)
 - Python 3, Flask
-- scikit-learn (ML model)
--- Hosted on **Render**
+- scikit-learn (Logistic Regression)
+- XGBoost (Gradient boosting)
+- Feature engineering
+- Hosted on **Render**
 
 ### 💻 Frontend (Web App)
 - Next.js + Tailwind CSS
-- File and text input interface
-- Consumes the Flask API
+- Email/domain input + upload interface
+- Fetches analysis results from the API
 - Hosted on **Vercel**
 
 ---
 
 ## 🧪 How It Works
 
-1. The user inputs email content or uploads a `.eml` file
-2. The frontend sends the content to `/analyze` API
-3. The model processes the email and returns:
-   - `verdict`: `phishing` or `legitimate`
-   - `confidence`: e.g. 93%
-   - `flags`: e.g. `"Spoofed sender"`, `"Urgent language"`
+1. User inputs a sender email address or uploads an `.eml` file
+2. The frontend extracts the **email domain**
+3. The backend extracts features:
+   - TF-IDF n-gram vectorization
+   - Digit and hyphen counts
+   - Domain suffix (e.g. `.ru`)
+   - Domain length
+   - Typosquatting distance (e.g. edit distance to known brands)
+4. Predictions are made using:
+   - Logistic Regression
+   - XGBoost Classifier
+   - Rule-based phishing heuristics
+5. The system applies a **voting ensemble**
+6. The verdict and confidence score are returned
 
 ---
 
 ## 📁 Project Structure
 
+```
 phishing-email-analyzer/
 ├── backend/
-│ ├── app.py # Flask API
-│ ├── phishing_model.pkl # Trained ML model
-│ ├── utils.py # Preprocessing functions
-│ └── requirements.txt
+│   ├── app.py                    # Flask API
+│   ├── phishing_voting_model.pkl # Trained ML ensemble
+│   ├── vectorizer.pkl            # TF-IDF vectorizer
+│   ├── utils.py                  # Feature extraction functions
+│   └── requirements.txt
 ├── frontend/
-│ ├── pages/
-│ │ ├── index.tsx # Input form
-│ │ └── result.tsx # Analysis result display
-│ ├── components/
-│ └── tailwind.config.js
+│   ├── pages/
+│   │   ├── index.tsx             # Input form
+│   │   └── result.tsx            # Verdict display
+│   ├── components/
+│   └── tailwind.config.js
+```
 
-# 📦 Installation (Local)
+---
+
+## 📦 Installation (Local)
 
 ### 1. Backend (Flask API)
 
+```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  
+source venv/bin/activate
 pip install -r requirements.txt
 python app.py
+```
 
 ### 2. Frontend (Next.js)
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
+
+---
 
 ## 📚 Training the Model
-The ML model is based on a modified version of the [Detecting Spam in Emails with LSTMs](https://www.kaggle.com/code/hrhuynguyen/detecting-spam-in-emails-with-lstms-99-accuracy) 
-notebook by [hrhuynguyen](https://www.kaggle.com/hrhuynguyen).
 
-### Modifications made:
-- Adapted the dataset for phishing detection
-- Simplified preprocessing for deployment
-- Exported trained model as `.h5` file using `tensorflow.keras`
-- Created a Flask API that loads and serves predictions
+This project uses custom-trained phishing detection models based on sender domain features extracted from real email datasets.
 
-### Dataset used:
-📎 [Kaggle Email Spam Dataset](https://www.kaggle.com/datasets/balaka18/email-spam-classification-dataset-csv)
+### Dataset Sources:
+- 📎 Kaggle Phishing Email Datasets
 
-The model uses:
-- Text cleaning, tokenization
-- Keras Tokenizer + padding
-- LSTM layers
+### Features:
+- Character-level TF-IDF of domain name
+- Digit count, hyphen count, domain suffix
+- Domain length
+- Typosquatting similarity (Levenshtein distance to known brands)
+- Rule-based blacklist for suspicious TLDs
 
-## 📁 Model Files
+### Models:
+- Logistic Regression
+- XGBoost Classifier
+- Combined with rule-based filtering using suspicious suffixes
 
-- `phishing_lstm_model.h5`: Saved Keras LSTM model
-- `tokenizer.pickle`: Tokenizer used for consistent input processing
+### Ensemble:
+- Soft voting classifier
+- Boosted with rule-based override:
+  - If domain ends with .ru, .tk, .xyz, etc. → flagged phishing automatically
 
-These are loaded by the Flask API on every request.
+### 📁 Model Files
+- `phishing_voting_model.pkl`: Trained ensemble model (LogReg + XGBoost)
+- `vectorizer.pkl`: TF-IDF vectorizer for domain processing
 
-👤 Author
+These are loaded by the Flask API on request.
+
+---
+
+## 👤 Author
 Walaa Mohamed
