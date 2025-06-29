@@ -457,7 +457,7 @@ export default function Home() {
             <motion.div 
               className="terminal-text" 
               style={{ 
-                fontSize: '1.5rem', 
+                fontSize: 'clamp(1rem, 4vw, 1.5rem)', 
                 fontFamily: '"JetBrains Mono", monospace', 
                 marginBottom: '2rem',
                 color: '#4ade80',
@@ -465,17 +465,19 @@ export default function Home() {
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textShadow: '0 0 8px rgba(9, 104, 68, 0.7)',
-                paddingRight: '0.5rem' // Add padding after the text
+                paddingRight: '0.5rem', // Add padding after the text
+                width: 'max-content', // Only take up as much space as needed
+                display: 'inline-block' // Better control over width
               }}
               initial={{ width: '0%' }}
-              animate={{ width: '100%' }}
+              animate={{ width: 'max-content' }} // Use max-content instead of 100% or auto
               transition={{ 
                 duration: 2.5, 
                 delay: 1,
                 ease: "easeInOut"
               }}
             >
-              <span style={{ letterSpacing: '0.15em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.15em' }}>Protect</span><span>.</span><span>&nbsp;&nbsp;</span>
+              <span style={{ letterSpacing: '0.1em' }}>Detect</span><span>.</span><span style={{ letterSpacing: '0.1em' }}>Analyze</span><span>.</span><span style={{ letterSpacing: '0.1em' }}>Protect</span><span>.</span>
             </motion.div>
             
             <ScannerAnimation />
@@ -555,26 +557,31 @@ export default function Home() {
       <footer style={{ 
         position: 'relative',
         zIndex: 10,
-        padding: '2rem 1.5rem',
+        padding: '2rem 1rem',
         marginTop: '4rem',
         borderTop: '1px solid rgba(59, 130, 246, 0.2)'
       }}>
         <div style={{ 
           display: 'flex',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
           justifyContent: 'center',
           alignItems: 'center',
           maxWidth: '90rem',
           marginLeft: 'auto',
           marginRight: 'auto',
-          fontSize: '0.875rem',
-          color: '#94a3b8'
+          fontSize: 'clamp(0.75rem, 3vw, 0.875rem)',
+          color: '#94a3b8',
+          textAlign: 'center',
+          gap: '0.25rem'
         }}>
-          <span>© 2023 PhishSecure. Developed with 💙 by </span>
+          <span>© 2023 PhishSecure. Developed with 💙 by</span>
           <a 
             href="https://linkedin.com/in/wxmohd" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="neon-text ml-1"
+            className="neon-text"
+            style={{ marginLeft: '0.25rem' }}
           >
             Walaa Mohammed
           </a>

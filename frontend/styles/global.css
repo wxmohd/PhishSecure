@@ -232,6 +232,50 @@ body::after {
   letter-spacing: 0.15em;
   animation: typing 3.5s steps(40, end), blink 1s step-end infinite;
   padding-right: 0.5em; /* Add padding after the text to move the cursor */
+  max-width: 100%;
+  display: inline-block;
+}
+
+/* Custom terminal text with precise animation */
+.custom-terminal-text {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-terminal-text::after {
+  content: '';
+  position: absolute;
+  right: -0.5em;
+  top: 0;
+  height: 100%;
+  width: 0.15em;
+  background-color: var(--neon-green);
+  animation: blink 1s step-end infinite;
+}
+
+.custom-terminal-text {
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  animation: custom-typing 2.5s steps(22, end) 1s forwards;
+}
+
+@keyframes custom-typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .terminal-text {
+    font-size: 1rem !important;
+    letter-spacing: 0.05em !important;
+  }
+  
+  .custom-terminal-text {
+    font-size: 1rem !important;
+    letter-spacing: 0.05em !important;
+  }
 }
 
 /* Glassmorphism card styling */
@@ -297,7 +341,7 @@ body::after {
   justify-content: center;
 }
 
-/* Header responsive styles */
+/* Header and footer responsive styles */
 @media (max-width: 640px) {
   .neon-border {
     padding: 0.3rem 0.6rem !important;
@@ -331,6 +375,15 @@ body::after {
   
   header [style*="display: flex; flexDirection: column"] {
     width: 120px;
+  }
+  
+  /* Footer responsive styles */
+  footer [style*="display: flex"] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    text-align: center;
+    gap: 0.25rem;
   }
 }
 
