@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { analyzeEmail, AnalysisResult } from '../utils/api';
 import ResultCard from '../components/ResultCard';
+import DebugPanel from '../components/DebugPanel';
 
 // Import dynamic from next/dynamic
 import dynamic from 'next/dynamic';
@@ -171,20 +172,27 @@ export default function Home() {
   
   const handleEmailSubmit = async (email: string) => {
     // Reset previous results and errors
+    console.log('Starting analysis, resetting state...');
     setAnalysisResult(null);
     setError(null);
     setIsAnalyzing(true);
+    console.log('isAnalyzing set to true');
     
     try {
-      console.log('Analyzing email content...');
+      console.log('Calling analyzeEmail with:', email);
       const result = await analyzeEmail(email);
-      console.log('Analysis result:', result);
+      console.log('Analysis result received:', result);
+      console.log('Setting analysis result in state...');
       setAnalysisResult(result);
+      console.log('Analysis result set in state');
     } catch (err) {
       console.error('Error analyzing email:', err);
       setError('Failed to analyze email. Please try again.');
+      console.log('Error state set');
     } finally {
+      console.log('Setting isAnalyzing to false...');
       setIsAnalyzing(false);
+      console.log('isAnalyzing set to false');
     }
   };
   

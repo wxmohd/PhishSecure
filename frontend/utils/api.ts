@@ -10,7 +10,7 @@ export interface AnalysisResult {
 
 /**
  * Analyzes an email for phishing indicators
- * @param emailContent The raw email content to analyze
+ * @param emailContent The email address to analyze
  * @returns Analysis result with verdict, confidence score, and flags
  */
 export const analyzeEmail = async (emailContent: string): Promise<AnalysisResult> => {
@@ -23,7 +23,7 @@ export const analyzeEmail = async (emailContent: string): Promise<AnalysisResult
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ content: emailContent }),
+      body: JSON.stringify({ email: emailContent }),
     });
 
     if (!response.ok) {

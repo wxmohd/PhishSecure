@@ -15,7 +15,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
   }, []);
 
   const { verdict, confidence, flags } = result;
-  const isPhishing = verdict === 'phishing';
+  // Override the verdict based on confidence score - if 60% or below, it's phishing
+  const isPhishing = confidence <= 60 ? true : verdict === 'phishing';
   
   // Determine confidence level color
   const getConfidenceColor = () => {
@@ -144,7 +145,7 @@ const ResultCard: React.FC<ResultCardProps> = ({ result, onReset }) => {
               border: isPhishing ? '1px solid rgba(239, 68, 68, 0.7)' : '1px solid rgba(74, 222, 128, 0.7)',
               textShadow: '0 0 5px rgba(0, 0, 0, 0.3)'
             }}>
-              {isPhishing ? 'Phishing Detected' : 'Legitimate Email'}
+              {confidence <= 60 ? 'Phishing Detected' : (isPhishing ? 'Phishing Detected' : 'Legitimate Email')}
             </span>
           </motion.div>
           

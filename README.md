@@ -1,6 +1,6 @@
 # 📧 Phishing Email Analyzer
 
-A web-based application that uses AI-powered machine learning to detect phishing **email domains** based on patterns and structure. Users can paste an email address or upload a `.eml` file, and the system will analyze the **sender domain** for phishing indicators and return a risk assessment.
+A web-based application that uses AI-powered machine learning to detect phishing **email domains** based on patterns and structure. Users can paste an email address, and the system will analyze the **sender domain** for phishing indicators and return a risk assessment.
 
 ---
 
@@ -12,7 +12,7 @@ A web-based application that uses AI-powered machine learning to detect phishing
 
 ## 🧠 Features
 
-- Paste sender email or upload `.eml` file
+- Paste sender email.
 - Analyze **sender domain** only (not full content)
 - Extract domain-based indicators:
   - Typosquatting (e.g. `paypa1.com` instead of `paypal.com`)
@@ -43,7 +43,7 @@ A web-based application that uses AI-powered machine learning to detect phishing
 
 ## 🧪 How It Works
 
-1. User inputs a sender email address or uploads an `.eml` file
+1. User inputs a sender email address
 2. The frontend extracts the **email domain**
 3. The backend extracts features:
    - TF-IDF n-gram vectorization

@@ -92,7 +92,7 @@ export const EmailInput = ({ onSubmit, isLoading, hasResult, onReset }: { onSubm
             fontWeight: 500, 
             color: '#4ade80',
             letterSpacing: '0.02em'
-          }}>Paste suspicious email content</label>
+          }}>Enter suspicious email address</label>
         </div>
         
         <form onSubmit={handleSubmit}>
@@ -122,7 +122,7 @@ export const EmailInput = ({ onSubmit, isLoading, hasResult, onReset }: { onSubm
                 id="email-input"
                 value={email}
                 onChange={handleEmailChange}
-                placeholder="Paste the email content here..."
+                placeholder="Enter the email address (e.g., example@domain.com)..."
                 disabled={hasResult && !isLoading}
                 style={{
                   width: '100%',
