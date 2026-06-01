@@ -3,6 +3,7 @@ services:
   - type: web
     name: phishsecure-bahrain-cti-api
     env: python
+    pythonVersion: "3.14.5"
     buildCommand: pip install -r requirements_cti.txt
     startCommand: python app_cti.py
     envVars:

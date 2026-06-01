@@ -151,31 +151,6 @@ export default function Home() {
           </motion.div>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            >
-              <div style={{
-                padding: '0.25rem 0.75rem',
-                borderRadius: '9999px',
-                backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                border: '1px solid rgba(59, 130, 246, 0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
-                <span style={{
-                  width: '0.5rem',
-                  height: '0.5rem',
-                  borderRadius: '50%',
-                  backgroundColor: '#22d3ee',
-                  boxShadow: '0 0 8px #22d3ee',
-                  animation: 'pulse 2s infinite'
-                }}></span>
-                <span style={{ fontSize: '0.75rem', color: '#bfdbfe' }}>AI Powered</span>
-              </div>
-            </motion.div>
             
             <Link href="/live-monitoring" style={{
               padding: '0.5rem 1rem',
